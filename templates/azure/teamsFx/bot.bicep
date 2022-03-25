@@ -15,13 +15,15 @@ var m365ClientSecret = provisionParameters['m365ClientSecret']
 var m365TenantId = provisionParameters['m365TenantId']
 var m365OauthAuthorityHost = provisionParameters['m365OauthAuthorityHost']
 
-var m365ApplicationIdUri = 'api://botid-${botId}'
+var m365ApplicationIdUri = 'api://botid-${appId}'
 
 var botAadAppClientId = provisionParameters['botAadAppClientId']
 
-var botAadAppClientSecret = provisionParameters['botAadAppClientSecret']
+var appId = provisionOutputs.identityOutput.value.identityClientId
 
-var botId = provisionParameters['botAadAppClientId']
+var appTenantId = provisionOutputs.identityOutput.value.identityTenantId
+
+
 
 resource botWebAppSettings 'Microsoft.Web/sites/config@2021-02-01' = {
   name: '${botWebAppName}/appsettings'
@@ -32,8 +34,8 @@ resource botWebAppSettings 'Microsoft.Web/sites/config@2021-02-01' = {
     M365_CLIENT_SECRET: m365ClientSecret // Client secret of AAD application
     M365_TENANT_ID: m365TenantId // Tenant id of AAD application
     M365_APPLICATION_ID_URI: m365ApplicationIdUri // Application ID URI of AAD application
-    BOT_ID: botAadAppClientId // ID of your bot
-    BOT_PASSWORD: botAadAppClientSecret // Secret of your bot
+    APP_ID: appId
+    APP_TENANT_ID: appTenantId
     IDENTITY_ID: provisionOutputs.identityOutput.value.identityClientId // User assigned identity id, the identity is used to access other Azure resources
   }, currentAppSettings)
 }

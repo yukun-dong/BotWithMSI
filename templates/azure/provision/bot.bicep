@@ -1,6 +1,8 @@
 @secure()
 param provisionParameters object
 param userAssignedIdentityId string
+param identityClientId string
+param identityTenantId string
 
 var resourceBaseName = provisionParameters.resourceBaseName
 var botAadAppClientId = provisionParameters['botAadAppClientId'] // Read AAD app client id for Azure Bot Service from parameters
@@ -19,7 +21,10 @@ resource botService 'Microsoft.BotService/botServices@2021-03-01' = {
   properties: {
     displayName: botDisplayName
     endpoint: uri('https://${webApp.properties.defaultHostName}', '/api/messages')
-    msaAppId: botAadAppClientId
+    msaAppId: identityClientId
+    msaAppType: 'UserAssignedMSI'
+    msaAppMSIResourceId: userAssignedIdentityId
+    msaAppTenantId: identityTenantId
   }
   sku: {
     name: botServiceSku // You can follow https://aka.ms/teamsfx-bicep-add-param-tutorial to add botServiceSku property to provisionParameters to override the default value "F0".
@@ -53,7 +58,6 @@ resource webApp 'Microsoft.Web/sites@2021-02-01' = {
   name: webAppName
   properties: {
     serverFarmId: serverfarm.id
-    keyVaultReferenceIdentity: userAssignedIdentityId // Use given user assigned identity to access Key Vault
     siteConfig: {
       appSettings: [
         {

@@ -13,6 +13,7 @@ output identityOutput object = {
   identityName: userAssignedIdentityProvision.outputs.identityName
   identityResourceId: userAssignedIdentityProvision.outputs.identityResourceId
   identityClientId: userAssignedIdentityProvision.outputs.identityClientId
+  identityTenantId: userAssignedIdentityProvision.outputs.identityTenantId
 }
 // Resources for bot
 module botProvision './provision/bot.bicep' = {
@@ -20,6 +21,8 @@ module botProvision './provision/bot.bicep' = {
   params: {
     provisionParameters: provisionParameters
     userAssignedIdentityId: userAssignedIdentityProvision.outputs.identityResourceId
+    identityClientId: userAssignedIdentityProvision.outputs.identityClientId
+    identityTenantId: userAssignedIdentityProvision.outputs.identityTenantId
   }
 }
 
